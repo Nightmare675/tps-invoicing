@@ -1,6 +1,6 @@
 const fs = require("fs");
 const faker = require("@faker-js/faker");
-const ExcelJS = require("exceljs");
+const { probFemale, probUSA, products, target } = require("./values");
 
 function shuffleArray(_array) {
   const array = [..._array];
@@ -14,38 +14,18 @@ function shuffleArray(_array) {
 }
 
 function getName() {
-  const prob = Math.random();
-  if (prob < 0.15) {
-    return `${faker.fakerES_MX.person.firstName(
+  const fakerModule =
+    Math.random() < probUSA ? faker.fakerEN : faker.fakerES_MX;
+  if (Math.random() < probFemale) {
+    return `${fakerModule.person.firstName(
       "female"
-    )} ${faker.fakerES_MX.person.lastName("female")}`;
+    )} ${fakerModule.person.lastName("female")}`;
   } else {
-    return `${faker.fakerES_MX.person.firstName(
+    return `${fakerModule.person.firstName(
       "male"
-    )} ${faker.fakerES_MX.person.lastName("male")}`;
+    )} ${fakerModule.person.lastName("male")}`;
   }
 }
-
-const target = 1346065;
-
-const products = [
-  {
-    name: "THE COMPLETE GUIDE TO BECOMING A SOFTWARE ARCHITECT",
-    value: 15590,
-  },
-  {
-    name: "HOW TO BECOME AN OUTSTANDING SOLUTION ARCHITECT",
-    value: 13590,
-  },
-  {
-    name: "DESIGN MICROSERVICES ARCHITECTURE WITH PATTERNS & PRINCIPLES",
-    value: 14590,
-  },
-  {
-    name: "SOFTWARE ARCHITECTURE & TECHNOLOGY OF LARGE-SCALE SYSTEMS",
-    value: 14590,
-  },
-];
 
 function addUp(target) {
   if (target < 0) {
@@ -75,16 +55,3 @@ fs.writeFileSync(
     encoding: "utf8",
   }
 );
-
-const workbook = new ExcelJS.Workbook();
-const worksheet = workbook.addWorksheet();
-workbook
-  .addWorksheet()
-  .addRows(
-    result.map((item) => [
-      getName(),
-      item.name,
-      Number.parseFloat((item.value / 100).toFixed(2)),
-    ])
-  );
-workbook.xlsx.writeFile("./asd.xlsx");
